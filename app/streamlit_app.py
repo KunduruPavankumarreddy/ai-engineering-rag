@@ -6,7 +6,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 import streamlit as st
 
-from app.rag import ask_question
+from app.services.rag_service import ask_question
 from app.pipeline import ingest_pdf
 from app.upload import save_uploaded_file
 if "messages" not in st.session_state:
@@ -24,23 +24,26 @@ st.title("📚 AI Engineering RAG Assistant")
 st.write("Ask questions about your uploaded PDF.")
 st.header("📂 Upload PDF")
 
-uploaded_file = st.file_uploader(
-    "Choose a PDF",
-    type="pdf"
+uploaded_files = st.file_uploader(
+    "Choose PDF files",
+    type="pdf",
+    accept_multiple_files=True
 )
 # -------------------------
 # Process PDF
 # -------------------------
 
-if uploaded_file is not None:
+if uploaded_files:
 
     if st.button("📥 Process PDF"):
 
         with st.spinner("Processing PDF..."):
 
-            pdf_path = save_uploaded_file(uploaded_file)
+           for uploaded_file in uploaded_files:
 
-            ingest_pdf(pdf_path)
+              pdf_path = save_uploaded_file(uploaded_file)
+
+              ingest_pdf(pdf_path)
 
         st.success("PDF processed successfully!")
         
@@ -69,24 +72,55 @@ if question:
 
     # AI
     with st.spinner("Searching..."):
-
-        answer, docs = ask_question(question)
+        
+        stream, docs, retrieval_time = ask_question(question)
 
     with st.chat_message("assistant"):
 
-        st.markdown(answer)
+        answer = st.write_stream(stream)
 
         st.divider()
 
         st.markdown("### 📚 Retrieved Sources")
 
         for i, doc in enumerate(docs, start=1):
+           
+           from pathlib import Path
 
-            with st.expander(
-                f"Chunk {i} | Page {doc.metadata.get('page', 0)+1}"
+           source = Path(
+           doc.metadata.get("source", "Unknown PDF")
+           ).name
+           
+           page = doc.metadata.get("page", "Unknown")
+           
+           with st.expander(
+                f"📄 {source} • Page {page}"
             ):
 
                 st.write(doc.page_content)
+                
+                
+        st.divider()
+
+        st.markdown("### ⚡ Performance")
+
+        col1, col2 = st.columns(2)
+
+        with col1:
+            st.metric(
+                "Retrieval",
+                f"{retrieval_time:.2f}s"
+        )
+
+        with col2:
+            st.metric(
+              "Generation",
+              "Streaming..."
+          )
+    st.divider()
+
+            
+        
 
     st.session_state.messages.append(
         {

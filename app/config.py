@@ -28,9 +28,9 @@ QDRANT_PORT = 6333
 # Chunking
 # ----------------------------
 
-CHUNK_SIZE = 1000
+CHUNK_SIZE = 700
 
-CHUNK_OVERLAP = 200
+CHUNK_OVERLAP = 100
 
 # ----------------------------
 # Embedding Model

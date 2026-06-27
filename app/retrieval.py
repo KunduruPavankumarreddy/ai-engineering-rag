@@ -25,7 +25,14 @@ def get_retriever():
     )
 
     retriever = vectorstore.as_retriever(
-        search_kwargs={"k": 3}
+
+    search_type="mmr",
+
+    search_kwargs={
+        "k":2,
+        "fetch_k":10,
+        "lambda_mult":0.5
+    }
     )
 
     return retriever
