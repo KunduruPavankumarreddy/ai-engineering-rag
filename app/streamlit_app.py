@@ -6,6 +6,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 import streamlit as st
 
+from app.services.memory_service import add_message
 from app.services.rag_service import ask_question
 from app.pipeline import ingest_pdf
 from app.upload import save_uploaded_file
@@ -24,6 +25,14 @@ st.title("📚 AI Engineering RAG Assistant")
 st.write("Ask questions about your uploaded PDF.")
 st.header("📂 Upload PDF")
 
+from app.services.memory_service import clear_memory
+if st.button("🗑️ Clear Chat"):
+
+    clear_memory()
+
+    st.session_state.messages = []
+
+    st.rerun()
 uploaded_files = st.file_uploader(
     "Choose PDF files",
     type="pdf",
@@ -66,6 +75,7 @@ if question:
             "content": question
         }
     )
+
 
     with st.chat_message("user"):
         st.markdown(question)

@@ -1,4 +1,5 @@
 import time
+from app.services.memory_service import get_conversation
 
 from app.llm import load_llm
 
@@ -7,23 +8,27 @@ llm = load_llm()
 
 def build_prompt(question, context):
 
+    history = get_conversation()
+
     return f"""
 You are an expert AI assistant answering questions from uploaded documents.
 
 Instructions:
 
-- Answer ONLY using the provided context.
-- If the answer is not found in the context, reply:
+- Use the conversation history to understand follow-up questions.
+- Answer ONLY using the provided document context.
+- If the answer is not in the context, reply:
   "I couldn't find this information in the uploaded documents."
-- Do not make up facts.
-- Be concise but complete.
-- Use bullet points whenever appropriate.
-- If multiple documents contain relevant information, combine it into one clear answer.
+- Never invent facts.
+- Be concise and well formatted.
 
-Context:
+Conversation History:
+{history}
+
+Document Context:
 {context}
 
-Question:
+Current Question:
 {question}
 
 Answer:
