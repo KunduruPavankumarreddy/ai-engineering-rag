@@ -4,6 +4,8 @@ from pathlib import Path
 # Paths
 # ----------------------------
 
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 UPLOAD_DIR = BASE_DIR / "uploads"
@@ -39,3 +41,11 @@ CHUNK_OVERLAP = 100
 EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 
 VECTOR_SIZE = 384
+
+INDEX_DIR = PROJECT_ROOT / "app" / "indexes"
+
+INDEX_DIR.mkdir(exist_ok=True)
+
+BM25_INDEX_PATH = INDEX_DIR / "bm25_index.pkl"
+
+BM25_DOCUMENTS_PATH = INDEX_DIR / "documents.pkl"
