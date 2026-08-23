@@ -1,109 +1,247 @@
-# AI Engineering RAG Assistant
+# 🚀 Production-Ready RAG System
 
-An end-to-end **Retrieval-Augmented Generation (RAG)** application that allows users to upload PDF documents and ask natural language questions about their content.
+A production-style Retrieval-Augmented Generation (RAG) application built using **FastAPI**, **LangChain**, **Qdrant**, **Ollama**, and **Docker**.
 
-The application retrieves relevant information from uploaded documents using semantic search and generates answers with a **locally running Large Language Model (LLM)**. Instead of relying solely on the model's pre-trained knowledge, responses are grounded in the uploaded document, making the answers more accurate and context-aware.
+The system enables users to upload PDF documents, retrieve relevant information using **Hybrid Search (Vector + BM25)**, rerank results using a **Cross Encoder**, and generate accurate responses using a local **Gemma 3** Large Language Model.
 
-This project was built to understand how production-style RAG systems work by integrating document processing, vector databases, embeddings, and local LLM inference into a single application.
+---
+## Key Highlights
+
+- Production-ready FastAPI backend
+- Dockerized deployment
+- Hybrid Retrieval (Dense + Sparse)
+- Cross Encoder reranking
+- Conversation-aware RAG
+- Local LLM using Ollama
+- Evaluation with DeepEval
+
+# 📌 Features
+
+- 📄 PDF Upload & Ingestion
+- ✂️ Intelligent Text Chunking
+- 🧠 Sentence Transformer Embeddings
+- 📦 Qdrant Vector Database
+- 🔍 Hybrid Search
+  - Dense Vector Search
+  - BM25 Keyword Search
+- 🎯 Cross Encoder Reranking
+- 🧠 Query Rewriting
+- 💬 Conversation Memory
+- ⚡ Streaming LLM Responses
+- 🌐 FastAPI REST API
+- 🐳 Dockerized Deployment
+- 📊 DeepEval Integration
+- ❤️ Health Check Endpoint
 
 ---
 
-## Features
+# 🏗️ System Architecture
 
-- Upload PDF documents through a Streamlit interface
-- Automatic PDF ingestion and processing
-- Intelligent document chunking
-- Semantic search using vector embeddings
-- HuggingFace embedding model
-- Qdrant Vector Database (Docker)
-- Local LLM inference using Ollama (Gemma 3)
-- Interactive chat interface
-- Displays retrieved source chunks
-- Modular and scalable project structure
-
----
-
-## Tech Stack
-
-| Category | Technology |
-|----------|------------|
-| Programming Language | Python |
-| UI | Streamlit |
-| Framework | LangChain |
-| Embedding Model | HuggingFace Sentence Transformers |
-| Vector Database | Qdrant |
-| LLM | Ollama (Gemma 3) |
-| Containerization | Docker |
-
----
-
-## Project Structure
+```
 
 ```text
-ai-engineering-rag/
+                    User
+                      │
+                      ▼
+                 FastAPI API
+                      │
+          ┌───────────┴────────────┐
+          │                        │
+     Upload PDF               Ask Question
+          │                        │
+          ▼                        ▼
+    PDF Loader             Query Rewriter
+          │                        │
+          ▼                        ▼
+     Chunk Documents        Query Router
+          │                        │
+          ▼                        ▼
+ Generate Embeddings      Hybrid Retrieval
+          │              ┌───────────────┐
+          ▼              │               │
+      Qdrant DB      Vector Search   BM25 Search
+          │              │               │
+          └──────────────┴───────────────┘
+                         │
+                         ▼
+                Cross Encoder Reranker
+                         │
+                         ▼
+                 Gemma3 (Ollama)
+                         │
+                         ▼
+                    Final Response
+```
+
+---
+
+# ⚙️ Tech Stack
+
+## Backend
+
+- FastAPI
+- Uvicorn
+- Python
+
+## LLM Framework
+
+- LangChain
+
+## Embeddings
+
+- sentence-transformers
+- all-MiniLM-L6-v2
+
+## Vector Database
+
+- Qdrant
+
+## LLM
+
+- Ollama
+- Gemma3:4B
+
+## Retrieval
+
+- Dense Vector Search
+- BM25
+- Hybrid Search
+- Query Routing
+
+## Reranking
+
+- Cross Encoder
+- ms-marco-MiniLM-L6-v2
+
+## Evaluation
+
+- DeepEval
+
+## Deployment
+
+- Docker
+- Docker Compose
+
+---
+
+# 📂 Project Structure
+
+```
+
+```text
+rag-system
 │
-├── app/
-│   ├── chunking.py
+├── app
+│   ├── api.py
 │   ├── config.py
-│   ├── embeddings.py
-│   ├── ingestion.py
-│   ├── llm.py
 │   ├── pipeline.py
-│   ├── rag.py
 │   ├── retrieval.py
-│   ├── streamlit_app.py
-│   ├── upload.py
-│   └── vectorstore.py
+│   ├── vectorstore.py
+│   ├── ingestion.py
+│   ├── embeddings.py
+│   ├── chunking.py
+│   ├── logger.py
+│   │
+│   ├── prompts
+│   ├── services
+│   └── indexes
 │
-├── data/
-├── uploads/
-├── vectorstore/
+├── evaluation
 │
+├── uploads
+│
+├── Dockerfile
+├── docker-compose.yml
 ├── requirements.txt
 ├── README.md
-└── .gitignore
+└── .env.example
 ```
 
 ---
 
-## How It Works
+# 🔄 RAG Pipeline
 
-1. Upload a PDF document.
-2. Extract text from the document.
-3. Split the text into smaller chunks.
-4. Generate embeddings using a HuggingFace embedding model.
-5. Store embeddings in Qdrant Vector Database.
-6. Retrieve the most relevant chunks for a user's question.
-7. Send the retrieved context and question to Ollama.
-8. Display the generated answer along with the retrieved sources.
+```
+
+```text
+PDF
+ │
+ ▼
+Load PDF
+ │
+ ▼
+Chunking
+ │
+ ▼
+Embedding Generation
+ │
+ ▼
+Upload to Qdrant
+ │
+ ▼
+Build BM25 Index
+ │
+ ▼
+────────────────────────────
+User Question
+ │
+ ▼
+Conversation History
+ │
+ ▼
+Question Rewriting
+ │
+ ▼
+Query Router
+ │
+ ▼
+Hybrid Search
+ │
+ ▼
+Cross Encoder
+ │
+ ▼
+Gemma3
+ │
+ ▼
+Streaming Response
+```
 
 ---
 
-## Installation
+# 🚀 Installation
 
-Clone the repository.
+## Clone Repository
 
 ```bash
-git clone https://github.com/KunduruPavankumarreddy/ai-engineering-rag.git
+git clone <your-repository-url>
 
-cd ai-engineering-rag
+cd rag-system
 ```
 
-Create a virtual environment.
+---
+
+## Create Virtual Environment
 
 ```bash
 python -m venv venv
 ```
 
-Activate the environment.
-
-### Windows
+Windows
 
 ```bash
 venv\Scripts\activate
 ```
 
-Install the required packages.
+Linux/Mac
+
+```bash
+source venv/bin/activate
+```
+
+---
+
+## Install Dependencies
 
 ```bash
 pip install -r requirements.txt
@@ -111,25 +249,29 @@ pip install -r requirements.txt
 
 ---
 
-## Run Qdrant
+## Configure Environment
 
-```bash
-docker run -d \
---name qdrant \
--p 6333:6333 \
--v qdrant_storage:/qdrant/storage \
-qdrant/qdrant
+Create
+
+```
+.env
+```
+
+from
+
+```
+.env.example
 ```
 
 ---
 
-## Run Ollama
+## Start Ollama
 
-Download Ollama:
+```bash
+ollama serve
+```
 
-https://ollama.com/download
-
-Pull the model.
+Pull model
 
 ```bash
 ollama pull gemma3:4b
@@ -137,83 +279,95 @@ ollama pull gemma3:4b
 
 ---
 
-## Run the Application
+## Run with Docker
 
 ```bash
-streamlit run app/streamlit_app.py
+docker compose up --build
 ```
 
 ---
 
-## Example Questions
+# 📡 API Endpoints
 
-After uploading a PDF, you can ask questions like:
+## Health Check
 
-- What is this document about?
-- Summarize the document.
-- Explain the main concepts.
-- What are the important topics discussed?
-- Give me a short summary.
-- List the key points.
+```
+GET /health
+```
 
----
-
-## Challenges Faced
-
-During development, I worked through several practical engineering challenges, including:
-
-- Integrating LangChain with Qdrant
-- Running Qdrant inside Docker
-- Switching from a cloud-based LLM to a local Ollama model
-- Organizing the project into modular components
-- Improving retrieval quality
-- Optimizing model loading for faster responses
-- Building an interactive chat interface with Streamlit
-
-These challenges helped me gain a deeper understanding of how modern AI applications are designed and deployed.
+Returns application health.
 
 ---
 
-## Future Improvements
+## Upload PDF
 
-Planned improvements include:
+```
+POST /upload
+```
 
-- Multiple PDF support
-- Conversation memory
-- Hybrid Search (Vector + BM25)
-- Cross-Encoder Reranking
-- Streaming LLM responses
-- FastAPI backend
-- Docker Compose support
-- Cloud deployment
-- User authentication
+Uploads a PDF and builds
+
+- Vector Database
+- BM25 Index
 
 ---
 
-## Key Learnings
+## Query
 
-Through this project, I gained practical experience with:
+```
+POST /query
+```
 
-- Retrieval-Augmented Generation (RAG)
-- Semantic Search
-- LangChain
-- HuggingFace Embeddings
-- Qdrant Vector Database
-- Docker
-- Ollama
-- Streamlit
-- Building modular AI applications
+Returns an answer generated using
 
-This project strengthened my understanding of how retrieval systems, vector databases, and local language models work together to build real-world AI applications.
+- Hybrid Retrieval
+- Cross Encoder
+- Gemma3
 
 ---
 
-## Author
+# 🐳 Docker Services
 
-**Pavan Kumar Reddy**
-
-GitHub: https://github.com/KunduruPavankumarreddy
+| Service | Purpose |
+|----------|----------|
+| FastAPI | Backend API |
+| Qdrant | Vector Database |
+| Ollama | Local LLM |
 
 ---
 
-If you found this project interesting or have suggestions for improvement, feel free to open an issue or contribute to the repository.
+# 📈 Future Improvements
+
+- Authentication
+- Multi-user support
+- Redis caching
+- LangSmith Monitoring
+- Kubernetes Deployment
+- CI/CD Pipeline
+- Cloud Deployment (AWS/GCP/Azure)
+- Observability with Prometheus & Grafana
+
+---
+
+# 📊 Evaluation
+
+The project supports evaluation using **DeepEval** to measure response quality and validate retrieval performance.
+
+---
+
+# 📸 Screenshots
+
+Add screenshots here
+
+- Swagger UI
+- Streamlit UI
+- Docker Containers
+- Qdrant Dashboard
+
+---
+
+# 👨‍💻 Author
+
+**Pavan Kunduru**
+
+AI Engineer | Machine Learning | Generative AI | LLM Engineering

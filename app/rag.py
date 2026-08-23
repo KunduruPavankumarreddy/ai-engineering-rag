@@ -18,7 +18,7 @@ def ask_question(question):
 
     retrieval_time = time.time() - retrieval_start
 
-    print(f"🔍 Retrieval Time: {retrieval_time:.2f} seconds")
+    print(f"Retrieval Time: {retrieval_time:.2f} seconds")
 
     context = "\n\n".join([doc.page_content for doc in docs])
 
@@ -50,6 +50,6 @@ Answer:
 
     generation_time = time.time() - generation_start
 
-    print(f"🤖 Generation Time: {generation_time:.2f} seconds")
+    print(f" Generation Time: {generation_time:.2f} seconds")
 
     return response.content, docs

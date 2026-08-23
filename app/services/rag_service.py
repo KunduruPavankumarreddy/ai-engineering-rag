@@ -1,4 +1,5 @@
 import time
+from app.logger import logger
 
 from app.services.memory_service import add_message
 from app.services.retrieval_service import retrieve_documents
@@ -10,11 +11,9 @@ def ask_question(question):
     retrieval_start = time.time()
     rewritten_question = rewrite_question(question)
 
-    print(f"📝 Rewritten Question: {rewritten_question}")
-    print("=" * 60)
-    print(f"Original Question : {question}")
-    print(f"Rewritten Question: {rewritten_question}")
-    print("=" * 60)
+    logger.info(
+        f"Original Question: {question} | Rewritten Question: {rewritten_question}"
+    )
 
     docs = retrieve_documents(rewritten_question)
 
@@ -28,7 +27,7 @@ def ask_question(question):
     context
     )
 
-    print(f"🔍 Retrieval Time: {retrieval_time:.2f} seconds")
+    logger.info(f" Retrieval Time: {retrieval_time:.2f} seconds")
     return (
     stream,
     docs,

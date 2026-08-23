@@ -1,5 +1,5 @@
 import pickle
-
+from app.logger import logger
 
 from rank_bm25 import BM25Okapi
 
@@ -33,7 +33,7 @@ def save_bm25(bm25, chunks):
     with open(BM25_DOCUMENTS_PATH, "wb") as f:
         pickle.dump(chunks, f)
 
-    print("✅ BM25 index saved.")
+    logger.info("BM25 index saved successfully.")
     
     
 def load_bm25():
@@ -69,11 +69,21 @@ def update_bm25(new_chunks):
 
     save_bm25(bm25, all_chunks)
 
-    print(f"✅ BM25 updated with {len(all_chunks)} chunks.")
+    logger.info(f" BM25 updated with {len(all_chunks)} chunks.")
     
 def search_bm25(question, top_k=5):
 
-    bm25, chunks = load_bm25()
+    try:
+
+        bm25, chunks = load_bm25()
+
+    except Exception as e:
+
+        logger.error(f"Failed to load BM25 index: {e}")
+
+        raise RuntimeError(
+            "BM25 index could not be loaded."
+        )
 
     tokenized_query = tokenize(question)
 
@@ -91,6 +101,6 @@ def search_bm25(question, top_k=5):
 
         docs.append(chunks[index])
 
-    print(f"🔎 BM25 retrieved {len(docs)} chunks.")
+    logger.info(f" BM25 retrieved {len(docs)} chunks.")
 
     return docs

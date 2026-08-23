@@ -1,51 +1,62 @@
 from pathlib import Path
+import os
+
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # ----------------------------
-# Paths
+# Project Paths
 # ----------------------------
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = PROJECT_ROOT
 
 UPLOAD_DIR = BASE_DIR / "uploads"
 
+VECTOR_DB_PATH = BASE_DIR / "vectorstore"
+
+INDEX_DIR = BASE_DIR / "app" / "indexes"
+
+BM25_INDEX_PATH = INDEX_DIR / "bm25_index.pkl"
+
+BM25_DOCUMENTS_PATH = INDEX_DIR / "documents.pkl"
+
 UPLOAD_DIR.mkdir(exist_ok=True)
 
-PDF_PATH = BASE_DIR / "data" / "python_handbok.pdf"
-
-VECTOR_DB_PATH = BASE_DIR / "vectorstore"
+INDEX_DIR.mkdir(exist_ok=True)
 
 # ----------------------------
 # Qdrant
 # ----------------------------
 
-COLLECTION_NAME = "python_docs"
+QDRANT_HOST = os.getenv("QDRANT_HOST")
 
-QDRANT_HOST = "localhost"
+QDRANT_PORT = int(os.getenv("QDRANT_PORT"))
 
-QDRANT_PORT = 6333
+COLLECTION_NAME = os.getenv("COLLECTION_NAME")
+
+# ----------------------------
+# Embeddings
+# ----------------------------
+
+EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL")
+
+VECTOR_SIZE = int(os.getenv("VECTOR_SIZE"))
 
 # ----------------------------
 # Chunking
 # ----------------------------
 
-CHUNK_SIZE = 700
+CHUNK_SIZE = int(os.getenv("CHUNK_SIZE"))
 
-CHUNK_OVERLAP = 100
+CHUNK_OVERLAP = int(os.getenv("CHUNK_OVERLAP"))
 
 # ----------------------------
-# Embedding Model
+# Ollama
 # ----------------------------
 
-EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
+OLLAMA_MODEL = os.getenv("OLLAMA_MODEL")
 
-VECTOR_SIZE = 384
-
-INDEX_DIR = PROJECT_ROOT / "app" / "indexes"
-
-INDEX_DIR.mkdir(exist_ok=True)
-
-BM25_INDEX_PATH = INDEX_DIR / "bm25_index.pkl"
-
-BM25_DOCUMENTS_PATH = INDEX_DIR / "documents.pkl"
+OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL")

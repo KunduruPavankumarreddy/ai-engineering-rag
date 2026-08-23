@@ -1,12 +1,22 @@
+import time
+import streamlit as st
+
 from sentence_transformers import CrossEncoder
+from app.logger import logger
 
-print("Loading CrossEncoder...")
 
-reranker = CrossEncoder(
-    "cross-encoder/ms-marco-MiniLM-L-6-v2"
-)
+@st.cache_resource
+def load_reranker():
 
-print("✅ CrossEncoder Loaded")
+    logger.info("Loading CrossEncoder...")
+
+    reranker = CrossEncoder(
+        "cross-encoder/ms-marco-MiniLM-L-6-v2"
+    )
+
+    logger.info("CrossEncoder loaded successfully.")
+
+    return reranker
 
 
 def rerank_documents(question, docs, top_k=3):
@@ -14,32 +24,40 @@ def rerank_documents(question, docs, top_k=3):
     if len(docs) <= top_k:
         return docs
 
-    print(f"🤖 Reranking {len(docs)} documents...")
+    logger.info(f"Reranking {len(docs)} documents...")
 
-    # Create (question, document) pairs
+    reranker = load_reranker()
+
     pairs = [
         (question, doc.page_content)
         for doc in docs
     ]
 
-    # Predict relevance scores
+    rerank_start = time.time()
+
     scores = reranker.predict(pairs)
 
-    # Combine documents with scores
+    rerank_time = time.time() - rerank_start
+
+    logger.info(
+        f"Cross-Encoder Reranking Time: "
+        f"{rerank_time:.2f} seconds"
+    )
+
     ranked = list(zip(docs, scores))
 
-    # Sort by score (highest first)
     ranked.sort(
         key=lambda x: x[1],
         reverse=True
     )
 
-    # Keep only top_k documents
     top_docs = [
         doc
         for doc, score in ranked[:top_k]
     ]
 
-    print(f"✅ Selected top {len(top_docs)} documents.")
+    logger.info(
+        f"Selected top {len(top_docs)} documents."
+    )
 
     return top_docs

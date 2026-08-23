@@ -1,5 +1,5 @@
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-
+from app.logger import logger
 from app.config import (
     CHUNK_SIZE,
     CHUNK_OVERLAP,
@@ -18,6 +18,6 @@ def split_documents(documents):
 
     chunks = splitter.split_documents(documents)
 
-    print(f"Created {len(chunks)} chunks.")
+    logger.info(f"Created {len(chunks)} chunks.")
 
     return chunks

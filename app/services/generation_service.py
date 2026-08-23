@@ -1,9 +1,8 @@
 import time
+
+from app.logger import logger
 from app.services.memory_service import get_conversation
-
 from app.llm import load_llm
-
-llm = load_llm()
 
 
 def build_prompt(question, context):
@@ -39,11 +38,40 @@ def stream_answer(question, context):
 
     prompt = build_prompt(question, context)
 
+    llm = load_llm()
+
     start = time.time()
+    first_token = True
 
-    for chunk in llm.stream(prompt):
-        yield chunk
+    try:
 
-    generation_time = time.time() - start
+        for chunk in llm.stream(prompt):
 
-    print(f"🤖 Generation Time: {generation_time:.2f} seconds")
+            if first_token:
+                first_token_time = time.time() - start
+
+                logger.info(
+                    f"Time To First Token: "
+                    f"{first_token_time:.2f} seconds"
+                )
+
+                first_token = False
+
+            yield chunk
+
+        generation_time = time.time() - start
+
+        logger.info(
+            f"Generation Time: "
+            f"{generation_time:.2f} seconds"
+        )
+
+    except Exception as e:
+
+        logger.error(
+            f"LLM generation failed: {e}"
+        )
+
+        raise RuntimeError(
+            "Failed to generate response."
+        )

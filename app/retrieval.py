@@ -1,22 +1,31 @@
-import streamlit as st
-
+from qdrant_client import QdrantClient
 from langchain_qdrant import QdrantVectorStore
-
 from app.embeddings import load_embedding_model
-
 from app.config import (
-    COLLECTION_NAME,
     QDRANT_HOST,
     QDRANT_PORT,
+    COLLECTION_NAME,
 )
 
-
-@st.cache_resource
 def get_retriever():
-
-    print("Loading retriever only once...")
-
     embeddings = load_embedding_model()
+
+    client = QdrantClient(
+        host=QDRANT_HOST,
+        port=QDRANT_PORT
+    )
+
+    collections = client.get_collections()
+
+    exists = any(
+        c.name == COLLECTION_NAME
+        for c in collections.collections
+    )
+
+    if not exists:
+        raise RuntimeError(
+            "No documents uploaded yet. Please upload a PDF first."
+        )
 
     vectorstore = QdrantVectorStore.from_existing_collection(
         embedding=embeddings,
@@ -24,15 +33,11 @@ def get_retriever():
         url=f"http://{QDRANT_HOST}:{QDRANT_PORT}",
     )
 
-    retriever = vectorstore.as_retriever(
-
-    search_type="mmr",
-
-    search_kwargs={
-        "k":2,
-        "fetch_k":10,
-        "lambda_mult":0.5
-    }
+    return vectorstore.as_retriever(
+        search_type="mmr",
+        search_kwargs={
+            "k": 2,
+            "fetch_k": 10,
+            "lambda_mult": 0.5,
+        },
     )
-
-    return retriever
