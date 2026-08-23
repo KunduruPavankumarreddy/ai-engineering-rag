@@ -1,28 +1,36 @@
-# Virtual environment
-.venv/
-
 # Python
 __pycache__/
 *.py[cod]
+*.pyo
 
-# Environment / secrets
+# Virtual Environment
+venv/
+.venv/
+
+# Environment Variables
 .env
-.env.*
 
-# Generated vector database
-vectorstore/
-qdrant_storage/
+# Streamlit
+.streamlit/
 
-# Generated indexes
-app/indexes/*.pkl
+# VS Code
+.vscode/
+
+# Python cache
+.pytest_cache/
+
+# Uploaded PDFs
+uploads/
+
+# OS Files
+.DS_Store
+Thumbs.db
 
 # Logs
 *.log
 
-# IDE
-.vscode/
-.idea/
+# Vector database
+vectorstore/
 
-# OS
-.DS_Store
-Thumbs.db
+# Generated BM25 indexes
+app/indexes/*.pkl
