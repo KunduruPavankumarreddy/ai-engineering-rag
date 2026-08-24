@@ -19,7 +19,11 @@ Instructions:
 - If the answer is not in the context, reply:
   "I couldn't find this information in the uploaded documents."
 - Never invent facts.
-- Be concise and well formatted.
+- Provide a detailed and well-structured answer.
+- Explain the topic step by step when appropriate.
+- Include important concepts, reasoning, examples, and comparisons when supported by the document context.
+- Do not unnecessarily shorten the answer.
+- Use headings, bullet points, and numbered lists when they improve readability..
 
 Conversation History:
 {history}
