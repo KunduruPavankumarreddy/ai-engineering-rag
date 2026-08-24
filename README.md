@@ -24,6 +24,25 @@ The main goal of this project was to understand how a RAG system can be designed
 - Health check endpoint
 - Docker and Docker Compose support
 - Local LLM inference using Ollama
+## 📸 Application Screenshots
+
+### 1. FastAPI Swagger API
+
+Interactive API documentation showing the available RAG endpoints including PDF upload, querying, and health checks.
+
+![FastAPI Swagger API](screenshots/swagger-api.png)
+
+### 2. RAG Response with Sources
+
+The RAG assistant retrieves relevant document chunks and generates a grounded response. Retrieval and generation performance metrics are also displayed.
+
+![RAG Response](screenshots/rag-response.png)
+
+### 3. Conversational RAG with Query Rewriting
+
+The system uses conversation history to understand follow-up questions and retrieve relevant context before generating the response.
+
+![Conversational RAG](screenshots/conversational-rag.png)
 
 ## Architecture
 
