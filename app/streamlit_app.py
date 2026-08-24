@@ -1,5 +1,7 @@
 import sys
+import time
 from pathlib import Path
+
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
@@ -86,8 +88,12 @@ if question:
         stream, docs, retrieval_time = ask_question(question)
 
     with st.chat_message("assistant"):
+        
+        generation_start = time.time()
 
         answer = st.write_stream(stream)
+        
+        generation_time = time.time() - generation_start
 
         st.divider()
 
@@ -125,7 +131,7 @@ if question:
         with col2:
             st.metric(
               "Generation",
-              "Streaming..."
+              f"{generation_time:.2f}s"
           )
     st.divider()
 
