@@ -3,16 +3,16 @@ from app.logger import logger
 from app.chunking import split_documents
 from app.embeddings import load_embedding_model
 from app.vectorstore import upload_documents
-from app.services.bm25_service import (
-    build_bm25,
-    save_bm25
-)
+from app.services.bm25_service import update_bm25
+
 
 def ingest_pdf(pdf_path):
     """
-    Load a PDF, split it into chunks,
-    generate embeddings, upload to Qdrant,
-    and update the BM25 index.
+    Load PDF, split into chunks,
+    deduplicate chunks,
+    generate embeddings only for new chunks,
+    upload new vectors to Qdrant,
+    and update BM25 with new chunks.
     """
 
     logger.info("Loading PDF...")
@@ -23,20 +23,37 @@ def ingest_pdf(pdf_path):
 
     chunks = split_documents(documents)
 
-    logger.info("Loading Embeddings...")
+    logger.info("Loading embeddings...")
 
     embeddings = load_embedding_model()
 
     logger.info("Uploading to Qdrant...")
 
-    upload_documents(chunks, embeddings)
-    
-    logger.info("Building BM25 index...")
+    vectorstore, new_chunks = upload_documents(
+        chunks,
+        embeddings
+    )
 
-    from app.services.bm25_service import update_bm25
+    # --------------------------------
+    # Update BM25 only with new chunks
+    # --------------------------------
 
-    logger.info("Updating BM25 index...")
+    if new_chunks:
 
-    update_bm25(chunks)
+        logger.info(
+            f"Updating BM25 with "
+            f"{len(new_chunks)} new chunks..."
+        )
+
+        update_bm25(new_chunks)
+
+    else:
+
+        logger.info(
+            "No new chunks. "
+            "Skipping BM25 update."
+        )
 
     logger.info("Finished!")
+
+    return vectorstore
