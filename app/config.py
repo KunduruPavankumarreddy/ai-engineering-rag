@@ -60,3 +60,19 @@ CHUNK_OVERLAP = int(os.getenv("CHUNK_OVERLAP"))
 OLLAMA_MODEL = os.getenv("OLLAMA_MODEL")
 
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL")
+
+# ----------------------------
+# Gemini
+# ----------------------------
+
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+
+GEMINI_MODEL = os.getenv(
+    "GEMINI_MODEL",
+    "gemini-3.5-flash"
+)
+
+LLM_PROVIDER = os.getenv(
+    "LLM_PROVIDER",
+    "ollama"
+)
