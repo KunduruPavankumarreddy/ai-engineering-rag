@@ -1,32 +1,38 @@
-from collections import deque
+import streamlit as st
 
-# Keep the last 6 messages (3 user + 3 assistant)
-conversation_history = deque(maxlen=6)
+
+def _get_history():
+
+    if "conversation_history" not in st.session_state:
+        st.session_state.conversation_history = []
+
+    return st.session_state.conversation_history
 
 
 def add_message(role, content):
-    conversation_history.append(
-        {
-            "role": role,
-            "content": content
-        }
-    )
+
+    history = _get_history()
+
+    history.append({
+        "role": role,
+        "content": content
+    })
+
+    # Keep last 6 messages
+    if len(history) > 6:
+        history.pop(0)
 
 
 def get_conversation():
 
-    history = ""
+    history = _get_history()
 
-    for message in conversation_history:
-
-        history += (
-            f"{message['role'].capitalize()}: "
-            f"{message['content']}\n"
-        )
-
-    return history
+    return "\n".join(
+        f"{message['role'].capitalize()}: {message['content']}"
+        for message in history
+    )
 
 
 def clear_memory():
 
-    conversation_history.clear()
+    st.session_state.conversation_history = []
