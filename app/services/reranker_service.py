@@ -19,7 +19,7 @@ def load_reranker():
     return reranker
 
 
-def rerank_documents(question, docs, top_k=3):
+def rerank_documents(question, docs, top_k=5):
 
     if len(docs) <= top_k:
         return docs
