@@ -22,39 +22,60 @@ def ask_question(question):
 
     add_message("user", question)
 
-    retrieval_start = time.time()
+    # -------------------------
+    # Question Rewriting
+    # -------------------------
 
-    # Rewrite the question using conversation history
+    rewrite_start = time.time()
+
     rewritten_question = rewrite_question(question)
+
+    rewrite_time = time.time() - rewrite_start
 
     logger.info(
         f"Original Question: {question} | "
         f"Rewritten Question: {rewritten_question}"
     )
 
-    # Retrieve relevant documents
+    logger.info(
+        f"Question Rewrite Time: {rewrite_time:.2f} seconds"
+    )
+
+    # -------------------------
+    # Retrieval
+    # -------------------------
+
+    retrieval_start = time.time()
+
     docs = retrieve_documents(rewritten_question)
 
     retrieval_time = time.time() - retrieval_start
-
-    # Build context for the LLM
-    context = "\n\n".join(
-        doc.page_content
-        for doc in docs
-    )
-
-    # Generate answer
-    stream = stream_answer(
-        question,
-        context
-    )
 
     logger.info(
         f"Retrieval Time: {retrieval_time:.2f} seconds"
     )
 
+    # -------------------------
+    # Build Context
+    # -------------------------
+
+    context = "\n\n".join(
+        doc.page_content
+        for doc in docs
+    )
+
+    # -------------------------
+    # Generation
+    # -------------------------
+
+    stream = stream_answer(
+        question,
+        context
+    )
+
     return (
         stream,
         docs,
+        rewrite_time,
         retrieval_time,
     )

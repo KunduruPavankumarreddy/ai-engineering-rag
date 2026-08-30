@@ -52,7 +52,10 @@ def stream_answer(question, context):
         for chunk in llm.stream(prompt):
 
             if first_token:
-                first_token_time = time.time() - start
+
+                first_token_time = (
+                    time.time() - start
+                )
 
                 logger.info(
                     f"Time To First Token: "
@@ -61,7 +64,10 @@ def stream_answer(question, context):
 
                 first_token = False
 
-            yield chunk
+            if hasattr(chunk, "content"):
+                yield chunk.content
+            else:
+                yield chunk
 
         generation_time = time.time() - start
 
@@ -72,10 +78,10 @@ def stream_answer(question, context):
 
     except Exception as e:
 
-        logger.error(
-            f"LLM generation failed: {e}"
+        logger.exception(
+            "LLM generation failed"
         )
 
         raise RuntimeError(
-            "Failed to generate response."
-        )
+            f"LLM generation failed: {e}"
+        ) from e

@@ -12,6 +12,8 @@ from app.services.memory_service import add_message
 from app.services.rag_service import ask_question
 from app.pipeline import ingest_pdf
 from app.upload import save_uploaded_file
+from app.services.kb_service import increment_kb_version
+
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
@@ -50,13 +52,18 @@ if uploaded_files:
 
         with st.spinner("Processing PDF..."):
 
-           for uploaded_file in uploaded_files:
+            for uploaded_file in uploaded_files:
 
-              pdf_path = save_uploaded_file(uploaded_file)
+                pdf_path = save_uploaded_file(uploaded_file)
 
-              ingest_pdf(pdf_path)
+                ingest_pdf(pdf_path)
 
-        st.success("PDF processed successfully!")
+            new_version = increment_kb_version()
+
+        st.success(
+            f"PDF processed successfully! "
+            f"Knowledge Base v{new_version}"
+        )
         
 # Display previous chat
 for message in st.session_state.messages:
@@ -85,7 +92,7 @@ if question:
     # AI
     with st.spinner("Searching..."):
         
-        stream, docs, retrieval_time = ask_question(question)
+        stream, docs, rewrite_time, retrieval_time = ask_question(question)
 
     with st.chat_message("assistant"):
         
@@ -120,15 +127,20 @@ if question:
 
         st.markdown("### ⚡ Performance")
 
-        col1, col2 = st.columns(2)
-
+        col1, col2, col3 = st.columns(3)
+        
         with col1:
+            st.metric(
+                "Rewrite",
+                f"{rewrite_time:.2f}s"
+            )
+        with col2:
             st.metric(
                 "Retrieval",
                 f"{retrieval_time:.2f}s"
         )
 
-        with col2:
+        with col3:
             st.metric(
               "Generation",
               f"{generation_time:.2f}s"
